@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSUMA — Consumo, Instituciones y Mercado Argentino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0e0c;
+  --paper: #f5f1ea;
+  --red: #c0392b;
+  --gold: #b8922a;
+  --grey: #6b6560;
+  --light: #e8e3d9;
+  --border: rgba(15,14,12,0.15);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans',sans-serif; font-weight:300; overflow-x:hidden; }
+body::before {
+  content:''; position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:9999; opacity:0.6;
+}
+
+/* NAV */
+nav {
+  position:fixed; top:0; width:100%; z-index:500;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.1rem 3rem;
+  background:rgba(245,241,234,0.94); border-bottom:1px solid var(--border);
+  backdrop-filter:blur(10px); transition:padding 0.3s, box-shadow 0.3s;
+}
+nav.scrolled { padding:0.75rem 3rem; box-shadow:0 4px 30px rgba(15,14,12,0.08); }
+.nav-logo { font-family:'Playfair Display',serif; font-weight:900; font-size:1.4rem; letter-spacing:0.08em; color:var(--ink); text-decoration:none; }
+.nav-logo span { color:var(--red); }
+.nav-links { display:flex; gap:2rem; list-style:none; }
+.nav-links a {
+  font-family:'IBM Plex Mono',monospace; font-size:0.67rem; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--grey); text-decoration:none; transition:color 0.2s; position:relative;
+}
+.nav-links a::after { content:''; position:absolute; bottom:-3px; left:0; width:0; height:1px; background:var(--red); transition:width 0.25s; }
+.nav-links a:hover { color:var(--ink); }
+.nav-links a:hover::after { width:100%; }
+.nav-cta {
+  font-family:'IBM Plex Mono',monospace; font-size:0.67rem; letter-spacing:0.1em; text-transform:uppercase;
+  background:var(--red); color:var(--paper); border:none; padding:0.6rem 1.2rem; cursor:pointer; text-decoration:none; transition:background 0.2s, transform 0.15s;
+}
+.nav-cta:hover { background:var(--ink); transform:translateY(-1px); }
+
+/* HERO */
+.hero { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; padding-top:5rem; position:relative; overflow:hidden; }
+.hero-left { padding:5rem 3rem; display:flex; flex-direction:column; justify-content:center; }
+.hero-tag {
+  font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--red); margin-bottom:1.5rem; display:flex; align-items:center; gap:0.7rem;
+  opacity:0; animation:fadeUp 0.8s ease 0.2s forwards;
+}
+.hero-tag::before { content:''; width:2rem; height:1px; background:var(--red); }
+h1 { font-family:'Playfair Display',serif; font-weight:900; font-size:clamp(3.2rem,5.5vw,5.8rem); line-height:0.95; letter-spacing:-0.02em; color:var(--ink); margin-bottom:1.5rem; opacity:0; animation:fadeUp 0.8s ease 0.35s forwards; }
+h1 em { font-style:italic; color:var(--red); }
+.hero-sub { font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.05em; color:var(--grey); margin-bottom:2rem; line-height:1.8; opacity:0; animation:fadeUp 0.8s ease 0.5s forwards; }
+.hero-desc { font-size:1rem; line-height:1.8; color:var(--ink); max-width:480px; margin-bottom:2.5rem; opacity:0; animation:fadeUp 0.8s ease 0.6s forwards; }
+.hero-desc strong { font-weight:500; }
+.hero-btns { display:flex; gap:1rem; flex-wrap:wrap; opacity:0; animation:fadeUp 0.8s ease 0.75s forwards; }
+
+.btn-primary { display:inline-flex; align-items:center; gap:0.7rem; background:var(--ink); color:var(--paper); font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; padding:1rem 1.8rem; transition:background 0.2s, transform 0.2s; border:none; cursor:pointer; }
+.btn-primary:hover { background:var(--red); transform:translateX(4px); }
+.btn-primary:hover svg { transform:translateX(4px); }
+.btn-primary svg { transition:transform 0.2s; }
+.btn-outline { display:inline-flex; align-items:center; gap:0.7rem; border:1px solid var(--ink); color:var(--ink); background:transparent; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; padding:1rem 1.8rem; transition:all 0.2s; cursor:pointer; }
+.btn-outline:hover { background:var(--ink); color:var(--paper); }
+
+.hero-right { background:var(--ink); display:flex; flex-direction:column; justify-content:flex-end; padding:4rem 3rem; position:relative; overflow:hidden; }
+.hero-right::before { content:'CONSUMA'; position:absolute; top:2rem; right:-1rem; font-family:'Playfair Display',serif; font-size:8rem; font-weight:900; color:rgba(255,255,255,0.035); letter-spacing:-0.05em; writing-mode:vertical-rl; transform:rotate(180deg); }
+.hero-pulse { position:absolute; top:3rem; left:3rem; width:120px; height:120px; border-radius:50%; border:1px solid rgba(192,57,43,0.3); animation:pulse 3s ease-in-out infinite; }
+.hero-pulse::after { content:''; position:absolute; inset:15px; border-radius:50%; border:1px solid rgba(192,57,43,0.2); animation:pulse 3s ease-in-out infinite 0.5s; }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:0.6} 50%{transform:scale(1.08);opacity:1} }
+
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; border:1px solid rgba(255,255,255,0.1); }
+.stat-item { padding:2rem 1.5rem; border-right:1px solid rgba(255,255,255,0.1); border-bottom:1px solid rgba(255,255,255,0.1); opacity:0; animation:fadeUp 0.6s ease forwards; }
+.stat-item:nth-child(1){animation-delay:0.8s} .stat-item:nth-child(2){animation-delay:0.95s}
+.stat-item:nth-child(3){animation-delay:1.1s} .stat-item:nth-child(4){animation-delay:1.25s}
+.stat-item:nth-child(2n){border-right:none} .stat-item:nth-last-child(-n+2){border-bottom:none}
+.stat-num { font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:900; color:var(--paper); line-height:1; margin-bottom:0.4rem; }
+.stat-num span { color:var(--red); }
+.stat-label { font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(245,241,234,0.4); line-height:1.5; }
+
+/* TICKER */
+.ticker-wrap { background:var(--red); overflow:hidden; padding:0.65rem 0; }
+.ticker { display:flex; animation:ticker 28s linear infinite; white-space:nowrap; }
+.ticker span { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(245,241,234,0.9); padding:0 2rem; }
+.ticker span::after { content:'◆'; margin-left:2rem; opacity:0.45; }
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* SHARED */
+.section-wrap { max-width:1200px; margin:0 auto; padding:6rem 3rem; }
+.section-header { display:flex; align-items:baseline; gap:1.5rem; margin-bottom:3.5rem; }
+.section-num { font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:var(--red); letter-spacing:0.1em; }
+h2 { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3.5vw,3rem); font-weight:700; line-height:1.1; color:var(--ink); }
+.divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:0 3rem; }
+
+/* ANIMATE */
+.animate { opacity:0; transform:translateY(28px); transition:opacity 0.65s ease, transform 0.65s ease; }
+.animate.visible { opacity:1; transform:translateY(0); }
+.animate-delay-1{transition-delay:0.1s} .animate-delay-2{transition-delay:0.2s} .animate-delay-3{transition-delay:0.3s}
+
+/* OBJETO */
+.objeto-grid { display:grid; grid-template-columns:1fr 1fr 1fr; border:1px solid var(--border); }
+.objeto-item { padding:2.5rem 2rem; border-right:1px solid var(--border); transition:background 0.25s; position:relative; overflow:hidden; }
+.objeto-item:last-child { border-right:none; }
+.objeto-item:hover { background:rgba(192,57,43,0.03); }
+.objeto-icon { font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.15em; color:var(--red); text-transform:uppercase; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.5rem; }
+.objeto-icon::before { content:''; width:1.2rem; height:1px; background:var(--red); }
+.objeto-item h3 { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; margin-bottom:0.9rem; line-height:1.2; }
+.objeto-item p { font-size:0.87rem; line-height:1.75; color:var(--grey); }
+
+/* PRODUCTOS */
+.productos-section { background:var(--ink); padding:6rem 0; }
+.productos-section .section-num { color:var(--gold); }
+.productos-list { border:1px solid rgba(255,255,255,0.1); }
+.producto-row { display:grid; grid-template-columns:3rem 1fr auto; align-items:start; gap:2rem; padding:2rem; border-bottom:1px solid rgba(255,255,255,0.1); cursor:pointer; transition:background 0.2s; position:relative; }
+.producto-row:last-child { border-bottom:none; }
+.producto-row:hover { background:rgba(255,255,255,0.04); }
+.producto-row::before { content:''; position:absolute; left:0; top:0; width:3px; height:0; background:var(--red); transition:height 0.35s; }
+.producto-row:hover::before { height:100%; }
+.producto-num { font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:rgba(245,241,234,0.25); padding-top:0.2rem; }
+.producto-content h3 { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; color:var(--paper); margin-bottom:0.5rem; line-height:1.2; }
+.producto-content p { font-size:0.84rem; line-height:1.7; color:rgba(245,241,234,0.5); max-width:600px; }
+.producto-tag { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(184,146,42,0.35); padding:0.3rem 0.7rem; white-space:nowrap; margin-top:0.2rem; }
+
+/* TONO */
+.tono-section { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
+.tono-quote { position:relative; padding:3rem; border-left:3px solid var(--red); background:rgba(192,57,43,0.03); }
+.tono-quote blockquote { font-family:'Playfair Display',serif; font-size:1.45rem; font-style:italic; line-height:1.55; color:var(--ink); }
+.tono-quote::before { content:'"'; position:absolute; top:-1.5rem; left:1.5rem; font-family:'Playfair Display',serif; font-size:7rem; color:var(--red); opacity:0.15; line-height:1; }
+.tono-text p { font-size:0.92rem; line-height:1.85; color:var(--grey); margin-bottom:1.4rem; }
+.tono-text p strong { color:var(--ink); font-weight:500; }
+
+/* AUDIENCIA */
+.audiencia-section { background:var(--light); padding:6rem 0; }
+.audiencia-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+.audiencia-card { background:var(--paper); padding:2.5rem 2rem; border:1px solid var(--border); position:relative; overflow:hidden; transition:transform 0.25s, box-shadow 0.25s; }
+.audiencia-card::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:3px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform 0.3s; }
+.audiencia-card:hover { transform:translateY(-5px); box-shadow:0 16px 48px rgba(15,14,12,0.1); }
+.audiencia-card:hover::after { transform:scaleX(1); }
+.audiencia-card h3 { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; margin-bottom:0.8rem; }
+.audiencia-card p { font-size:0.84rem; line-height:1.7; color:var(--grey); }
+
+/* NOTICIAS */
+.noticias-section { background:var(--paper); padding:6rem 0; }
+.noticias-grid { display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--border); }
+.noticia-card { padding:2rem; border-right:1px solid var(--border); transition:background 0.2s; }
+.noticia-card:last-child { border-right:none; }
+.noticia-card:hover { background:rgba(192,57,43,0.03); }
+.noticia-fuente { font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--red); margin-bottom:0.8rem; display:flex; align-items:center; gap:0.5rem; }
+.noticia-fuente::before { content:''; width:1rem; height:1px; background:var(--red); }
+.noticia-card h4 { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; line-height:1.3; margin-bottom:0.7rem; color:var(--ink); }
+.noticia-card p { font-size:0.82rem; line-height:1.65; color:var(--grey); margin-bottom:1rem; }
+.noticia-fecha { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; letter-spacing:0.08em; color:rgba(107,101,96,0.55); }
+.noticia-link { display:inline-flex; align-items:center; gap:0.4rem; font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink); text-decoration:none; margin-top:1rem; transition:color 0.2s; }
+.noticia-link:hover { color:var(--red); }
+.noticia-link:hover svg { transform:translateX(3px); }
+.noticia-link svg { transition:transform 0.2s; }
+.noticias-footer { text-align:center; margin-top:2.5rem; }
+
+/* FALLOS */
+.fallos-section { background:var(--ink); padding:6rem 0; }
+.fallos-section .section-num { color:var(--gold); }
+.fallos-list { border:1px solid rgba(255,255,255,0.08); }
+.fallo-item { display:grid; grid-template-columns:auto 1fr auto; gap:2rem; padding:2rem 2.5rem; border-bottom:1px solid rgba(255,255,255,0.08); align-items:center; transition:background 0.2s; }
+.fallo-item:last-child { border-bottom:none; }
+.fallo-item:hover { background:rgba(255,255,255,0.03); }
+.fallo-tribunal { writing-mode:vertical-rl; transform:rotate(180deg); font-family:'IBM Plex Mono',monospace; font-size:0.55rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(184,146,42,0.55); }
+.fallo-body h4 { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; color:var(--paper); margin-bottom:0.5rem; line-height:1.25; }
+.fallo-body p { font-size:0.82rem; line-height:1.65; color:rgba(245,241,234,0.5); max-width:640px; }
+.fallo-meta { text-align:right; }
+.fallo-anio { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; color:rgba(255,255,255,0.07); line-height:1; margin-bottom:0.4rem; }
+.fallo-tag { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(184,146,42,0.3); padding:0.25rem 0.6rem; white-space:nowrap; }
+
+/* SUSCRIPCION */
+.suscripcion-section { background:linear-gradient(135deg, var(--red) 0%, #8b1e14 100%); padding:6rem 0; position:relative; overflow:hidden; }
+.suscripcion-section::before { content:''; position:absolute; top:-50%; right:-10%; width:600px; height:600px; border-radius:50%; border:1px solid rgba(255,255,255,0.07); pointer-events:none; }
+.suscripcion-inner { max-width:720px; margin:0 auto; padding:0 3rem; text-align:center; position:relative; z-index:1; }
+.suscripcion-inner .hero-tag { justify-content:center; color:rgba(245,241,234,0.65); animation:none; opacity:1; }
+.suscripcion-inner .hero-tag::before { background:rgba(245,241,234,0.65); }
+.suscripcion-inner h2 { color:var(--paper); margin-bottom:1.2rem; }
+.suscripcion-inner > p { font-size:1rem; line-height:1.75; color:rgba(245,241,234,0.72); margin-bottom:2.5rem; }
+.form-sus { display:grid; grid-template-columns:1fr 1fr auto; border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.07); backdrop-filter:blur(6px); }
+.form-sus input { background:transparent; border:none; border-right:1px solid rgba(255,255,255,0.18); padding:1.1rem 1.4rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.88rem; color:var(--paper); outline:none; }
+.form-sus input::placeholder { color:rgba(245,241,234,0.42); }
+.form-sus input:focus { background:rgba(255,255,255,0.05); }
+.form-sus button { background:var(--paper); color:var(--red); border:none; padding:1.1rem 1.8rem; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; white-space:nowrap; transition:background 0.2s, color 0.2s; font-weight:500; }
+.form-sus button:hover { background:var(--ink); color:var(--paper); }
+.form-nota { font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.06em; color:rgba(245,241,234,0.38); margin-top:1rem; }
+.form-success { display:none; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.22); padding:1.4rem 2rem; color:var(--paper); font-family:'IBM Plex Mono',monospace; font-size:0.8rem; letter-spacing:0.05em; margin-bottom:1rem; }
+
+/* SUMATE */
+.sumate-section { background:var(--paper); padding:6rem 0; }
+.sumate-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:start; }
+.sumate-left p { font-size:0.93rem; line-height:1.85; color:var(--grey); margin-bottom:1.3rem; }
+.sumate-left p strong { color:var(--ink); font-weight:500; }
+.roles-list { list-style:none; margin-top:2rem; }
+.roles-list li { display:flex; align-items:flex-start; gap:1rem; padding:1rem 0; border-bottom:1px solid var(--border); }
+.roles-list li:last-child { border-bottom:none; }
+.role-dot { width:6px; height:6px; border-radius:50%; background:var(--red); margin-top:0.45rem; flex-shrink:0; }
+.role-text h4 { font-family:'Playfair Display',serif; font-size:0.95rem; font-weight:700; margin-bottom:0.2rem; }
+.role-text p { font-size:0.82rem; color:var(--grey); line-height:1.6; }
+.sumate-form { background:var(--light); border:1px solid var(--border); padding:2.5rem; }
+.sumate-form h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:2rem; }
+.form-group { margin-bottom:1.2rem; }
+.form-group label { display:block; font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--grey); margin-bottom:0.5rem; }
+.form-group input, .form-group select, .form-group textarea { width:100%; background:var(--paper); border:1px solid var(--border); padding:0.85rem 1rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.88rem; color:var(--ink); outline:none; transition:border-color 0.2s; appearance:none; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--red); }
+.form-group textarea { resize:vertical; min-height:100px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.btn-sumate { width:100%; background:var(--ink); color:var(--paper); border:none; padding:1.1rem; font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; margin-top:0.5rem; }
+.btn-sumate:hover { background:var(--red); }
+
+/* CONTACTO */
+.contacto-section { background:var(--ink); padding:5rem 0; }
+.contacto-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; }
+.contacto-left h2 { color:var(--paper); margin-bottom:1.5rem; }
+.contacto-left p { font-size:0.93rem; line-height:1.8; color:rgba(245,241,234,0.55); margin-bottom:2rem; }
+.contacto-email { display:inline-flex; align-items:center; gap:1rem; font-family:'IBM Plex Mono',monospace; font-size:0.9rem; color:var(--paper); text-decoration:none; border:1px solid rgba(255,255,255,0.18); padding:1.2rem 2rem; transition:background 0.2s, border-color 0.2s; }
+.contacto-email:hover { background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.4); }
+.contacto-email svg { color:var(--red); }
+.contacto-right { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); padding:2.5rem; }
+.contacto-items { list-style:none; }
+.contacto-items li { display:flex; gap:1rem; align-items:flex-start; padding:1rem 0; border-bottom:1px solid rgba(255,255,255,0.07); }
+.contacto-items li:last-child { border-bottom:none; }
+.ci-label { font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(245,241,234,0.3); min-width:80px; padding-top:0.15rem; }
+.ci-val { font-size:0.87rem; color:rgba(245,241,234,0.72); line-height:1.5; }
+
+/* FOOTER */
+footer { background:#080807; color:var(--paper); padding:4rem 3rem 2rem; }
+.footer-top { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:3rem; padding-bottom:3rem; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:2rem; }
+.footer-brand .nav-logo { font-size:1.7rem; margin-bottom:1rem; display:block; }
+.footer-brand p { font-size:0.82rem; line-height:1.7; color:rgba(245,241,234,0.38); }
+.footer-col h4 { font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(245,241,234,0.28); margin-bottom:1.2rem; }
+.footer-col ul { list-style:none; }
+.footer-col ul li { margin-bottom:0.6rem; }
+.footer-col ul li a { font-size:0.82rem; color:rgba(245,241,234,0.52); text-decoration:none; transition:color 0.2s; }
+.footer-col ul li a:hover { color:var(--paper); }
+.footer-bottom { display:flex; justify-content:space-between; align-items:center; }
+.footer-bottom p { font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.08em; color:rgba(245,241,234,0.22); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem} .nav-links,.nav-cta{display:none}
+  .hero{grid-template-columns:1fr} .hero-right{display:none}
+  .objeto-grid,.tono-section,.sumate-grid,.contacto-grid{grid-template-columns:1fr}
+  .objeto-item{border-right:none;border-bottom:1px solid var(--border)} .objeto-item:last-child{border-bottom:none}
+  .audiencia-grid,.noticias-grid{grid-template-columns:1fr}
+  .noticia-card{border-right:none;border-bottom:1px solid var(--border)} .noticia-card:last-child{border-bottom:none}
+  .fallo-item{grid-template-columns:1fr} .fallo-tribunal{writing-mode:horizontal-tb;transform:none} .fallo-meta{text-align:left}
+  .form-sus{grid-template-columns:1fr} .form-sus input{border-right:none;border-bottom:1px solid rgba(255,255,255,0.18)}
+  .form-row{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr;gap:2rem}
+  .section-wrap{padding:4rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <a href="#" class="nav-logo">CON<span>SU</span>MA</a>
+  <ul class="nav-links">
+    <li><a href="#objeto">El Centro</a></li>
+    <li><a href="#productos">Informes</a></li>
+    <li><a href="#noticias">Medios</a></li>
+    <li><a href="#fallos">Fallos</a></li>
+    <li><a href="#sumate">Sumate</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="#suscripcion" class="nav-cta">Recibir informes</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Centro de Investigación Independiente</div>
+    <h1>La economía<br>real,<br><em>sin eufemismos.</em></h1>
+    <p class="hero-sub">CONSUMO · INSTITUCIONES · MERCADO ARGENTINO</p>
+    <p class="hero-desc">Producimos conocimiento sobre lo que <strong>efectivamente le pasa al bolsillo de la gente</strong> cuando un gobierno toma una decisión, cuando una empresa ajusta sus precios, o cuando se cierra una fábrica.</p>
+    <div class="hero-btns">
+      <a href="#suscripcion" class="btn-primary">Recibir informes <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="#sumate" class="btn-outline">Sumate al proyecto</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-pulse"></div>
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-num">5<span>+</span></div><div class="stat-label">Líneas de<br>investigación</div></div>
+      <div class="stat-item"><div class="stat-num">12<span>×</span></div><div class="stat-label">Informes<br>por año</div></div>
+      <div class="stat-item"><div class="stat-num">0</div><div class="stat-label">Clientes en<br>sector privado</div></div>
+      <div class="stat-item"><div class="stat-num">1<span>ª</span></div><div class="stat-label">Lealtad con<br>la evidencia</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>Poder adquisitivo</span><span>Canasta básica</span><span>Concentración de mercados</span><span>Apertura importadora</span><span>Empleo industrial</span><span>Política económica</span><span>Precios y rentabilidades</span><span>Consumidor como sujeto económico</span><span>Inflación sectorial</span><span>Competencia imperfecta</span>
+    <span>Poder adquisitivo</span><span>Canasta básica</span><span>Concentración de mercados</span><span>Apertura importadora</span><span>Empleo industrial</span><span>Política económica</span><span>Precios y rentabilidades</span><span>Consumidor como sujeto económico</span><span>Inflación sectorial</span><span>Competencia imperfecta</span>
+  </div>
+</div>
+
+<!-- OBJETO -->
+<div class="section-wrap" id="objeto">
+  <div class="section-header animate"><span class="section-num">01</span><h2>Qué estudia CONSUMA</h2></div>
+  <div class="objeto-grid">
+    <div class="objeto-item animate animate-delay-1">
+      <div class="objeto-icon">Política</div>
+      <h3>Decisiones de gobierno e impacto en el consumo</h3>
+      <p>Cada medida tiene un destinatario final que los comunicados oficiales omiten: el consumidor. Devaluaciones, subsidios, tasas, aranceles. Los medimos, los mostramos y los nombramos.</p>
+    </div>
+    <div class="objeto-item animate animate-delay-2">
+      <div class="objeto-icon">Mercados</div>
+      <h3>Comportamiento empresarial y concentración</h3>
+      <p>Los mercados argentinos tienen estructuras de concentración que ningún manual reconocería. Pocas empresas, escasa competencia real, traslado de costos asimétrico. Lo monitoreamos.</p>
+    </div>
+    <div class="objeto-item animate animate-delay-3">
+      <div class="objeto-icon">Industria</div>
+      <h3>Industria nacional, importaciones y consumo</h3>
+      <p>La discusión más mal planteada de la economía argentina. Analizamos la tensión entre proteger productores y beneficiar consumidores con datos, sin dogma y sin sesgo ideológico.</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PRODUCTOS -->
+<div class="productos-section" id="productos">
+  <div class="section-wrap">
+    <div class="section-header animate"><span class="section-num">02</span><h2 style="color:var(--paper)">Nuestros informes</h2></div>
+    <div class="productos-list">
+      <div class="producto-row animate"><span class="producto-num">01</span><div class="producto-content"><h3>Informe de Coyuntura del Consumo</h3><p>Publicación mensual breve orientada a medios. Indicadores clave sobre poder adquisitivo, canasta básica y variación de precios sectoriales con análisis editorial sin contemplaciones.</p></div><span class="producto-tag">Mensual</span></div>
+      <div class="producto-row animate"><span class="producto-num">02</span><div class="producto-content"><h3>Radar de Precios y Rentabilidades</h3><p>Seguimiento trimestral de la brecha entre evolución de costos y precios en alimentos, indumentaria, tecnología, servicios y salud.</p></div><span class="producto-tag">Trimestral</span></div>
+      <div class="producto-row animate"><span class="producto-num">03</span><div class="producto-content"><h3>Análisis de Impacto de Política Económica</h3><p>Informes de 5 a 10 páginas cuando una decisión de gobierno lo justifica. Evalúa el efecto real, no la intención. Siempre: quiénes ganan y quiénes pierden.</p></div><span class="producto-tag">Según agenda</span></div>
+      <div class="producto-row animate"><span class="producto-num">04</span><div class="producto-content"><h3>Monitor de Industria y Empleo</h3><p>Informe semestral sobre capacidad productiva nacional en sectores clave. Cruza producción, empleo, importaciones y precios al consumidor.</p></div><span class="producto-tag">Semestral</span></div>
+      <div class="producto-row animate"><span class="producto-num">05</span><div class="producto-content"><h3>Casos CONSUMA</h3><p>Análisis puntuales sobre situaciones concretas que merecen ser nombradas. Los más cortos, directos y disruptivos, diseñados para impactar en la agenda mediática.</p></div><span class="producto-tag">Disruptivo</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TONO -->
+<div class="section-wrap" id="tono">
+  <div class="section-header animate"><span class="section-num">03</span><h2>El tono y la voz</h2></div>
+  <div class="tono-section">
+    <div class="tono-quote animate">
+      <blockquote>"CONSUMA dice lo que los datos muestran, aunque incomode. Su única lealtad es con la evidencia y con el consumidor como sujeto económico central."</blockquote>
+    </div>
+    <div class="tono-text animate">
+      <p>CONSUMA habla en <strong>primera persona analítica</strong>. No dice "algunos analistas sostienen". Dice lo que los datos muestran y saca las conclusiones que corresponde sacar.</p>
+      <p>El centro no es de izquierda ni de derecha en el sentido partidario, pero sí tiene una perspectiva explícita: <strong>el consumidor no es un dato macroeconómico</strong> sino el sujeto alrededor del cual debería organizarse la política económica.</p>
+      <p>Esa perspectiva genera fricciones con el establishment empresarial cuando los precios son abusivos, y con el gobierno cuando las políticas empobrecen. <strong>Esa doble incomodidad es, precisamente, la que le da credibilidad.</strong></p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AUDIENCIA -->
+<div class="audiencia-section">
+  <div class="section-wrap">
+    <div class="section-header animate"><span class="section-num">04</span><h2>¿Por qué ahora?</h2></div>
+    <div class="audiencia-grid">
+      <div class="audiencia-card animate animate-delay-1"><h3>Cronistas y periodistas</h3><p>Los medios cubren la coyuntura pero rara vez producen análisis de mediano plazo. CONSUMA los alimenta con el análisis que necesitan pero no tienen tiempo de producir.</p></div>
+      <div class="audiencia-card animate animate-delay-2"><h3>Público general informado</h3><p>Hay mucho ruido ideológico y poca evidencia accesible. CONSUMA llena ese espacio con datos duros e interpretación clara sobre cómo cada medida afecta al bolsillo real.</p></div>
+      <div class="audiencia-card animate animate-delay-3"><h3>Agenda económica 2025</h3><p>La discusión sobre apertura importadora, desregulación y política industrial está en el centro del debate argentino con una intensidad que no tenía desde los noventa.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTICIAS -->
+<div class="noticias-section" id="noticias">
+  <div class="section-wrap">
+    <div class="section-header animate"><span class="section-num">05</span><h2>En los medios</h2></div>
+    <div class="noticias-grid">
+      <div class="noticia-card animate animate-delay-1">
+        <div class="noticia-fuente">Infobae</div>
+        <h4>La canasta básica subió 8% en enero mientras los salarios crecieron 4%</h4>
+        <p>El informe mensual de CONSUMA muestra la brecha entre precios y salarios reales en el primer mes del año.</p>
+        <div class="noticia-fecha">Febrero 2025</div>
+        <a href="#" class="noticia-link">Leer nota <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <div class="noticia-card animate animate-delay-2">
+        <div class="noticia-fuente">El Cronista</div>
+        <h4>Concentración en alimentos: 4 empresas controlan el 60% del mercado de aceites</h4>
+        <p>El Radar de Precios revela estructuras de mercado que explican por qué los precios no bajan aunque los costos sí.</p>
+        <div class="noticia-fecha">Enero 2025</div>
+        <a href="#" class="noticia-link">Leer nota <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <div class="noticia-card animate animate-delay-3">
+        <div class="noticia-fuente">Página 12</div>
+        <h4>Apertura importadora: quiénes ganan y quiénes pierden en la industria textil</h4>
+        <p>Análisis de impacto sobre el empleo sectorial y los precios al consumidor en el rubro indumentaria.</p>
+        <div class="noticia-fecha">Diciembre 2024</div>
+        <a href="#" class="noticia-link">Leer nota <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+    <div class="noticias-footer animate">
+      <a href="#" class="btn-outline">Ver todas las notas</a>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FALLOS -->
+<div class="fallos-section" id="fallos">
+  <div class="section-wrap">
+    <div class="section-header animate"><span class="section-num">06</span><h2 style="color:var(--paper)">Fallos que importan</h2></div>
+    <div class="fallos-list">
+      <div class="fallo-item animate">
+        <div class="fallo-tribunal">CNDC</div>
+        <div class="fallo-body">
+          <h4>Multa a supermercados por coordinación de precios en productos de primera necesidad</h4>
+          <p>La Comisión Nacional de Defensa de la Competencia sancionó a tres cadenas por prácticas concertadas en precios de aceite y harina durante 2022. Antecedente clave para casos de inflación coordinada.</p>
+        </div>
+        <div class="fallo-meta"><div class="fallo-anio">2023</div><span class="fallo-tag">Competencia</span></div>
+      </div>
+      <div class="fallo-item animate">
+        <div class="fallo-tribunal">CSJN</div>
+        <div class="fallo-body">
+          <h4>Consumidores Argentinos c/ Poder Ejecutivo — cláusulas abusivas en seguros</h4>
+          <p>La Corte Suprema estableció que las cláusulas que limitan la responsabilidad de aseguradoras en contratos de adhesión son nulas si el consumidor no tuvo posibilidad real de negociarlas.</p>
+        </div>
+        <div class="fallo-meta"><div class="fallo-anio">2022</div><span class="fallo-tag">Consumidor</span></div>
+      </div>
+      <div class="fallo-item animate">
+        <div class="fallo-tribunal">CAyT</div>
+        <div class="fallo-body">
+          <h4>Acción colectiva por aumento de tarifas sin audiencia pública previa</h4>
+          <p>La Cámara suspendió incrementos tarifarios de distribuidoras eléctricas por omisión del proceso participativo obligatorio. Precedente para el control ciudadano de tarifas.</p>
+        </div>
+        <div class="fallo-meta"><div class="fallo-anio">2024</div><span class="fallo-tag">Tarifas</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUSCRIPCION -->
+<div class="suscripcion-section" id="suscripcion">
+  <div class="suscripcion-inner animate">
+    <div class="hero-tag">Información sin eufemismos</div>
+    <h2>Recibí nuestros informes.</h2>
+    <p>Suscribite y recibí cada publicación de CONSUMA directo en tu correo: coyuntura mensual, radar de precios, análisis de política y casos disruptivos.</p>
+    <div class="form-sus" id="form-sus">
+      <input type="text" placeholder="Tu nombre" id="sus-nombre">
+      <input type="email" placeholder="Tu correo electrónico" id="sus-email">
+      <button onclick="suscribir()">Suscribirme →</button>
+    </div>
+    <div class="form-success" id="sus-ok">✓ &nbsp;¡Listo! Te sumaste. Te llegará el próximo informe.</div>
+    <p class="form-nota">Sin spam. Solo informes de CONSUMA. Podés darte de baja cuando quieras.</p>
+  </div>
+</div>
+
+<!-- SUMATE -->
+<div class="sumate-section" id="sumate">
+  <div class="section-wrap">
+    <div class="section-header animate"><span class="section-num">07</span><h2>Sumate al proyecto</h2></div>
+    <div class="sumate-grid">
+      <div class="sumate-left animate">
+        <p>CONSUMA es un proyecto en construcción. Buscamos personas con <strong>compromiso con la evidencia</strong> y ganas de hacer análisis económico útil para la sociedad.</p>
+        <p>No importa si sos economista, periodista, abogado, diseñador o desarrollador. Lo que importa es que te interese <strong>entender y comunicar cómo funciona realmente la economía argentina.</strong></p>
+        <ul class="roles-list">
+          <li><div class="role-dot"></div><div class="role-text"><h4>Investigadores y analistas</h4><p>Economistas, sociólogos, estadísticos para producir y revisar informes.</p></div></li>
+          <li><div class="role-dot"></div><div class="role-text"><h4>Periodistas y comunicadores</h4><p>Para traducir el análisis técnico en contenido accesible y de impacto.</p></div></li>
+          <li><div class="role-dot"></div><div class="role-text"><h4>Abogados y especialistas legales</h4><p>Para la sección de fallos y análisis regulatorio.</p></div></li>
+          <li><div class="role-dot"></div><div class="role-text"><h4>Diseño y tecnología</h4><p>Para visualización de datos, web y comunicación visual.</p></div></li>
+        </ul>
+      </div>
+      <div class="sumate-form animate">
+        <h3>Quiero sumarme</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Nombre</label><input type="text" placeholder="Tu nombre"></div>
+          <div class="form-group"><label>Apellido</label><input type="text" placeholder="Tu apellido"></div>
+        </div>
+        <div class="form-group"><label>Correo electrónico</label><input type="email" placeholder="tu@correo.com"></div>
+        <div class="form-group">
+          <label>¿Cómo querés colaborar?</label>
+          <select><option value="">Seleccioná una opción</option><option>Investigación y análisis</option><option>Periodismo y comunicación</option><option>Área legal / fallos</option><option>Diseño y visualización</option><option>Tecnología y datos</option><option>Otro</option></select>
+        </div>
+        <div class="form-group"><label>Contanos un poco sobre vos</label><textarea placeholder="Tu formación, experiencia y por qué te interesa CONSUMA..."></textarea></div>
+        <button class="btn-sumate" id="btn-sumate" onclick="enviarSumate()">Enviar →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACTO -->
+<div class="contacto-section" id="contacto">
+  <div class="section-wrap">
+    <div class="contacto-grid">
+      <div class="contacto-left animate">
+        <h2>Escribinos</h2>
+        <p>Para consultas, propuestas de colaboración, pedidos de informes o cualquier tema relacionado con el centro.</p>
+        <a href="mailto:consumaorg@gmail.com" class="contacto-email">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4h14v10H2V4zm0 0l7 6 7-6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          consumaorg@gmail.com
+        </a>
+      </div>
+      <div class="contacto-right animate">
+        <ul class="contacto-items">
+          <li><span class="ci-label">Correo</span><span class="ci-val">consumaorg@gmail.com</span></li>
+          <li><span class="ci-label">Informes</span><span class="ci-val">Mensuales, trimestrales y según agenda política</span></li>
+          <li><span class="ci-label">Consultas</span><span class="ci-val">Análisis de impacto, datos, colaboraciones</span></li>
+          <li><span class="ci-label">Sede</span><span class="ci-val">Argentina</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">CON<span>SU</span>MA</a>
+      <p>Centro de estudios independiente sobre consumo, instituciones y mercado argentino. Sin clientes que proteger ni línea política que sostener. Solo evidencia.</p>
+    </div>
+    <div class="footer-col"><h4>El centro</h4><ul><li><a href="#objeto">Qué estudiamos</a></li><li><a href="#tono">Metodología</a></li><li><a href="#sumate">Sumate</a></li><li><a href="#contacto">Contacto</a></li></ul></div>
+    <div class="footer-col"><h4>Publicaciones</h4><ul><li><a href="#productos">Coyuntura del Consumo</a></li><li><a href="#productos">Radar de Precios</a></li><li><a href="#productos">Política Económica</a></li><li><a href="#productos">Casos CONSUMA</a></li></ul></div>
+    <div class="footer-col"><h4>Recursos</h4><ul><li><a href="#noticias">En los medios</a></li><li><a href="#fallos">Fallos que importan</a></li><li><a href="#suscripcion">Suscribirse</a></li><li><a href="mailto:consumaorg@gmail.com">consumaorg@gmail.com</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 CONSUMA — Consumo, Instituciones y Mercado Argentino</p>
+    <p>La evidencia primero.</p>
+  </div>
+</footer>
+
+<script>
+// Nav shrink on scroll
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+
+// Intersection Observer animations
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.animate').forEach(el => obs.observe(el));
+
+// Active nav link
+window.addEventListener('scroll', () => {
+  let cur = '';
+  document.querySelectorAll('[id]').forEach(s => { if(window.scrollY >= s.offsetTop - 130) cur = s.id; });
+  document.querySelectorAll('.nav-links a').forEach(a => { a.style.color = a.getAttribute('href') === '#'+cur ? 'var(--ink)' : ''; });
+});
+
+// Suscripción
+function suscribir(){
+  const email = document.getElementById('sus-email').value.trim();
+  if(!email || !email.includes('@')){ document.getElementById('sus-email').focus(); return; }
+  document.getElementById('form-sus').style.display = 'none';
+  document.getElementById('sus-ok').style.display = 'block';
+  // → Conectá aquí con Mailchimp, Brevo o tu backend
+  console.log('Nueva suscripción:', document.getElementById('sus-nombre').value, email);
+}
+document.addEventListener('keydown', e => { if(e.key==='Enter' && document.activeElement.id?.startsWith('sus-')) suscribir(); });
+
+// Sumate
+function enviarSumate(){
+  const btn = document.getElementById('btn-sumate');
+  btn.textContent = '✓ Mensaje enviado — te contactamos pronto';
+  btn.style.background = 'var(--red)';
+  btn.disabled = true;
+  // → Conectá aquí con Formspree, EmailJS o tu backend
+}
+</script>
+</body>
+</html>
